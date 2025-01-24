@@ -6,29 +6,41 @@ class Board:
         self.board: npt.NDArray[np.str_] = np.full((3, 3, 3, 3), " ")
 
     def play_turn(self, player: str, bigX: int, bigY: int, smallX: int, smallY: int) -> bool:
-        if self.board[bigX, bigY, smallX, smallY] != " ":
+        if self.board[bigY, bigX, smallY, smallX] != " ":
             return False
         
-        self.board[bigX, bigY, smallX, smallY] = player
+        self.board[bigY, bigX, smallY, smallX] = player
         return True
     
     def check_small_win(self, player: str, bigX: int, bigY: int) -> bool:
         small_board: npt.NDArray[np.str_] = self.board[bigX, bigY]
 
         for i in range(3):
-            if np.all(small_board[i] == player) \
-                or np.all(small_board[:, i] == player) \
-                or np.all(np.diag(small_board) == player) \
-                or np.all(np.diag(np.fliplr(small_board)) == player):
+            if (small_board[i] == player).all() \
+                or (small_board[:, i] == player).all() \
+                or (np.diag(small_board) == player).all() \
+                or (np.diag(np.fliplr(small_board)) == player).all():
 
                 return True
 
         return False
     
+    def check_big_win(self, player: str) -> bool:
+        return False
+    
+    def is_full(self) -> bool:
+        return False
+    
     def print(self) -> None:
-        for bigX in range(3):
-            for smallX in range(3):
-                for bigY in range(3):
-                    print(" | ".join(self.board[bigX, bigY, smallX]), end=" || ")
+        print("-" * 41)
+
+        for bigY in range(3):
+            for smallY in range(3):
+                print("|| ", end="")
+
+                for bigX in range(3):
+                    print(" | ".join(self.board[bigY, bigX, smallY]), end=" || ")
+
                 print()
-            print("-" * 40)
+
+            print("-" * 41)
