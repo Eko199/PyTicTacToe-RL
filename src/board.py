@@ -16,7 +16,7 @@ class Board:
         }
 
     def play_turn(self, player: int, big_x: int, big_y: int, small_x: int, small_y: int) -> bool:
-        if not [big_x, big_y, small_x, small_y] <= [0, 1, 2]:
+        if not { big_x, big_y, small_x, small_y } <= { 0, 1, 2 }:
             return False
 
         current_board: npt.NDArray[np.int8] = self.board[big_y, big_x]

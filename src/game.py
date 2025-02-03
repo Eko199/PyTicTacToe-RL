@@ -1,9 +1,12 @@
+from typing import Any
+import numpy as np
 from .board import Board
 from .players.human_player import HumanPlayer, Player
 from .players.random_player import RandomPlayer
+from .saving.save_manager import save_json
 
 class Game:
-    def __init__(self, opponent: Player, *, test_mode: bool = False):
+    def __init__(self, mode: int, *, test_mode: bool = False):
         self.test_mode: bool = test_mode
         self.player1: int = 1
         self.player2: int = 2
@@ -12,9 +15,16 @@ class Game:
         self.next_x: int = -1
         self.next_y: int = -1
 
+        opponents: dict[int, Player] = {
+            1: HumanPlayer(),
+            2: RandomPlayer(),
+            3: RandomPlayer()
+        }
+
+        self.mode = mode
         self.players: dict[int, Player] = {
             self.player1: HumanPlayer(),
-            self.player2: opponent
+            self.player2: opponents[mode]
         }
 
         self.current_player: int = self.player1
@@ -35,14 +45,26 @@ class Game:
 
     def play_turn(self) -> None:
         print(f"{self.board.player_symbols[self.current_player]}'s turn!")
-        (big_x, big_y, small_x, small_y) = self.players[self.current_player].get_turn(self.next_x, self.next_y)
+        turn: tuple[int, int, int, int] | None = self.players[self.current_player].get_turn(self.next_x, self.next_y)
+
+        if turn is None:
+            self.save()
+            exit()
+        
+        big_x, big_y, small_x, small_y = turn
 
         while not self.board.play_turn(self.current_player, big_x, big_y, small_x, small_y):
             if isinstance(self.players[self.current_player], HumanPlayer):
                 print("Invalid move! Try again.")
-                (big_x, big_y, small_x, small_y) = self.players[self.current_player].get_turn(self.next_x, self.next_y)
+                turn = self.players[self.current_player].get_turn(self.next_x, self.next_y)
+
+                if turn is None:
+                    self.save()
+                    exit()
+                
+                big_x, big_y, small_x, small_y = turn
             else:
-                (big_x, big_y, small_x, small_y) = RandomPlayer().get_turn(self.next_x, self.next_y)
+                big_x, big_y, small_x, small_y = RandomPlayer().get_turn(self.next_x, self.next_y)
 
         if self.board.check_small_win(self.current_player, big_x, big_y):
             print(f"{self.board.player_symbols[self.current_player]} wins small board ({big_x},{big_y})!")
@@ -61,3 +83,37 @@ class Game:
 
     def print(self) -> None:
         self.board.print()
+
+    def save(self) -> None:
+        choice = input("Would you like to save the game? (y/n) ").lower()[0]
+
+        while choice not in { "y", "n" }:
+            print("Invalid input!")
+            choice = input("Would you like to save the game? (y/n) ").lower()[0]
+
+        if choice == "n":
+            return
+        
+        data: dict[str, Any] = {
+            "board": self.board.board.tolist(), 
+            "big_board": self.board.big_board.tolist(), 
+            "current_player": self.current_player,
+            "next": (self.next_x, self.next_y),
+            "mode": self.mode
+        }
+        
+        try:
+            save_json(data)
+            print("Game saved successfully!")
+        except OSError as e:
+            print(e)
+
+    @classmethod
+    def load(cls, data: dict[str, Any]):
+        game = cls(data["mode"])
+        game.board.board = np.array(data["board"])
+        game.board.big_board = np.array(data["big_board"])
+        game.current_player = data["current_player"]
+        game.next_x, game.next_y = data["next"]
+
+        return game
