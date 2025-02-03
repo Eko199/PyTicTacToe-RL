@@ -31,19 +31,22 @@ class Game:
         self.winner: int | None = None
 
     def play(self) -> None:
+        last_turn: tuple[int, int, int, int] | None = None
+
         while not self.board.is_full() and not self.winner:
-            self.print()
-            self.play_turn()
+            self.print(last_turn)
+            last_turn = self.play_turn()
+            
             if not self.test_mode:
                 self.switch_player()
 
-        self.print()
+        self.print(last_turn)
         print(f"{self.winner} wins!" if self.winner else "It's a tie!")
 
     def switch_player(self) -> None:
         self.current_player = self.player1 + self.player2 - self.current_player
 
-    def play_turn(self) -> None:
+    def play_turn(self) -> tuple[int, int, int, int]:
         print(f"{self.board.player_symbols[self.current_player]}'s turn!")
         turn: tuple[int, int, int, int] | None = self.players[self.current_player].get_turn(self.next_x, self.next_y)
 
@@ -76,13 +79,15 @@ class Game:
         if not self.test_mode and self.board.check_small_board_valid(small_x, small_y):
             self.next_x = small_x
             self.next_y = small_y
-            return
+            return big_x, big_y, small_x, small_y
 
         self.next_x = -1
         self.next_y = -1
 
-    def print(self) -> None:
-        self.board.print()
+        return big_x, big_y, small_x, small_y
+
+    def print(self, last_turn: tuple[int, int, int, int] | None = None) -> None:
+        self.board.print(last_turn)
 
     def save(self) -> None:
         choice = input("Would you like to save the game? (y/n) ").lower()[0]
