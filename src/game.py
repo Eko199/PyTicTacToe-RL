@@ -4,20 +4,20 @@ from .player import Player
 class Game:
     def __init__(self, *, test_mode: bool = False):
         self.test_mode: bool = test_mode
-        self.player1: str = "O"
-        self.player2: str = "X"
+        self.player1: int = 1
+        self.player2: int = 2
 
         self.board: Board = Board()
         self.next_x: int = -1
         self.next_y: int = -1
 
-        self.players: dict[str, Player] = {
+        self.players: dict[int, Player] = {
             self.player1: Player(),
             self.player2: Player()
         }
 
-        self.current_player: str = self.player1
-        self.winner: str | None = None
+        self.current_player: int = self.player1
+        self.winner: int | None = None
 
     def play(self) -> None:
         while not self.board.is_full() and not self.winner:
@@ -29,13 +29,10 @@ class Game:
         print(f"{self.winner} wins!" if self.winner else "It's a tie!")
 
     def switch_player(self) -> None:
-        if self.current_player == self.player1:
-            self.current_player = self.player2
-        else:
-            self.current_player = self.player1
+        self.current_player = self.player1 + self.player2 - self.current_player
 
     def play_turn(self) -> bool:
-        print(f"{self.current_player}'s turn!")
+        print(f"{self.board.player_symbols[self.current_player]}'s turn!")
         (bigX, bigY, smallX, smallY) = self.players[self.current_player].get_turn(self.next_x, self.next_y)
 
         if not self.board.play_turn(self.current_player, bigX, bigY, smallX, smallY):
@@ -43,11 +40,11 @@ class Game:
             return False
 
         if self.board.check_small_win(self.current_player, bigX, bigY):
-            print(f"{self.current_player} wins small board ({bigX},{bigY})!")
+            print(f"{self.board.player_symbols[self.current_player]} wins small board ({bigX},{bigY})!")
 
             if self.board.check_big_win(self.current_player):
-                print(f"{self.current_player} wins the game!")
                 self.winner = self.current_player
+                print(f"{self.board.player_symbols[self.winner]} wins the game!")
 
         if not self.test_mode and self.board.check_small_board_valid(smallX, smallY):
             self.next_x = smallX
