@@ -35,25 +35,25 @@ class Game:
 
     def play_turn(self) -> None:
         print(f"{self.board.player_symbols[self.current_player]}'s turn!")
-        (bigX, bigY, smallX, smallY) = self.players[self.current_player].get_turn(self.next_x, self.next_y)
+        (big_x, big_y, small_x, small_y) = self.players[self.current_player].get_turn(self.next_x, self.next_y)
 
-        while not self.board.play_turn(self.current_player, bigX, bigY, smallX, smallY):
+        while not self.board.play_turn(self.current_player, big_x, big_y, small_x, small_y):
             if isinstance(self.players[self.current_player], HumanPlayer):
                 print("Invalid move! Try again.")
-                (bigX, bigY, smallX, smallY) = self.players[self.current_player].get_turn(self.next_x, self.next_y)
+                (big_x, big_y, small_x, small_y) = self.players[self.current_player].get_turn(self.next_x, self.next_y)
             else:
-                (bigX, bigY, smallX, smallY) = RandomPlayer().get_turn(self.next_x, self.next_y)
+                (big_x, big_y, small_x, small_y) = RandomPlayer().get_turn(self.next_x, self.next_y)
 
-        if self.board.check_small_win(self.current_player, bigX, bigY):
-            print(f"{self.board.player_symbols[self.current_player]} wins small board ({bigX},{bigY})!")
+        if self.board.check_small_win(self.current_player, big_x, big_y):
+            print(f"{self.board.player_symbols[self.current_player]} wins small board ({big_x},{big_y})!")
 
             if self.board.check_big_win(self.current_player):
                 self.winner = self.current_player
                 print(f"{self.board.player_symbols[self.winner]} wins the game!")
 
-        if not self.test_mode and self.board.check_small_board_valid(smallX, smallY):
-            self.next_x = smallX
-            self.next_y = smallY
+        if not self.test_mode and self.board.check_small_board_valid(small_x, small_y):
+            self.next_x = small_x
+            self.next_y = small_y
             return
 
         self.next_x = -1

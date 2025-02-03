@@ -15,18 +15,21 @@ class Board:
             2: player2
         }
 
-    def play_turn(self, player: int, bigX: int, bigY: int, smallX: int, smallY: int) -> bool:
-        current_board: npt.NDArray[np.int8] = self.board[bigY, bigX]
+    def play_turn(self, player: int, big_x: int, big_y: int, small_x: int, small_y: int) -> bool:
+        if not [big_x, big_y, small_x, small_y] <= [0, 1, 2]:
+            return False
 
-        if self.big_board[bigY, bigX] != self.EMPTY or current_board[smallY, smallX] != self.EMPTY:
+        current_board: npt.NDArray[np.int8] = self.board[big_y, big_x]
+
+        if self.big_board[big_y, big_x] != self.EMPTY or current_board[small_y, small_x] != self.EMPTY:
             return False
         
-        current_board[smallY, smallX] = player
+        current_board[small_y, small_x] = player
 
         if Board.check_board_win(current_board, player):
-            self.big_board[bigY, bigX] = player
+            self.big_board[big_y, big_x] = player
         elif (current_board != self.EMPTY).all():
-            self.big_board[bigY, bigX] = self.FULL
+            self.big_board[big_y, big_x] = self.FULL
 
         return True
     

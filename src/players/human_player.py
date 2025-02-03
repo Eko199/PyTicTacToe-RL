@@ -2,11 +2,16 @@ from .player import Player
 
 class HumanPlayer(Player):
     def get_int_or_quit(self, prompt: str) -> int:
-        try:
-            return int(input(prompt))
-        except ValueError:
-            print("Invalid input (must be an integer)! Quitting game.")
-            exit()
+        entered: str = input(prompt)
+
+        while not entered.isdigit():
+            if entered.lower()[0] == "q":
+                exit()
+
+            print("Invalid input!")
+            entered = input(prompt)
+
+        return int(entered)
 
     def get_turn(self, next_x: int, next_y: int) -> tuple[int, int, int, int]:
         if next_x == -1:
