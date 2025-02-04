@@ -13,8 +13,8 @@ class HumanPlayer(Player):
 
         return int(entered)
 
-    def get_turn(self, next_x: int, next_y: int) -> tuple[int, int, int, int] | None:
-        if next_x == -1:
+    def get_turn(self, next: tuple[int, int]) -> tuple[int, int, int, int] | None:
+        if next == (-1, -1):
             print("You can play anywhere!")
             big_x: int | None = self.get_int_or_quit("Enter big X: ")
 
@@ -26,9 +26,8 @@ class HumanPlayer(Player):
             if big_y is None:
                 return None
         else:
-            print(f"You must play in the ({next_x}, {next_y}) board!")
-            big_x: int | None = next_x
-            big_y: int | None = next_y
+            print(f"You must play in the {next} board!")
+            big_x, big_y = next
 
         small_x: int | None = self.get_int_or_quit("Enter small X: ")
 

@@ -2,7 +2,7 @@ from typing import Any
 import argparse
 from .game import Game
 from .saving.save_manager import load_json
-from .utils import input_or_quit
+from .utils import cond_input_or_quit
 
 def main_menu(args: argparse.Namespace):
     game: Game | None = None
@@ -12,10 +12,7 @@ def main_menu(args: argparse.Namespace):
         print("1. New game")
         print("2. Load game")
 
-        choice: str = input_or_quit()
-
-        while not choice.isdigit() or int(choice) < 1 or int(choice) > 2:
-            choice = input_or_quit("Invalid input. Please try again (1-2): ")
+        choice: str = cond_input_or_quit(lambda x: x.isdigit() and 1 <= int(x) <= 2, "", "Invalid input. Please try again (1-2): ")
 
         match int(choice):
             case 1:
@@ -31,15 +28,12 @@ def main_menu(args: argparse.Namespace):
 
 
 def new_game(args: argparse.Namespace) -> Game:
+    print("Choose gamemode:")
     print("1. Play hot-seat multiplayer")
     print("2. Play against radomized actions bot")
     print("3. Play against trained AI")
 
-    choice: str = input_or_quit()
-
-    while not choice.isdigit() or int(choice) < 1 or int(choice) > 3:
-        choice = input_or_quit("Invalid input. Please try again (1-3): ")
-
+    choice: str = cond_input_or_quit(lambda x: x.isdigit() and 1 <= int(x) <= 3, "", "Invalid input. Please try again (1-3): ")
     return Game(int(choice), test_mode=args.test)
 
 def load_game() -> Game | None:
