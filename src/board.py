@@ -1,6 +1,7 @@
 import numpy as np
 import numpy.typing as npt
 from colorama import Fore, Style
+from collections import defaultdict
 
 class Board:
     EMPTY: int = 0
@@ -10,11 +11,11 @@ class Board:
         self.board: npt.NDArray[np.int8] = np.full((3, 3, 3, 3), self.EMPTY)
         self.big_board: npt.NDArray[np.int8] = np.full((3, 3), self.EMPTY)
 
-        self.player_symbols: dict[int, str] = {
+        self.player_symbols: defaultdict[int, str] = defaultdict(str, {
             self.EMPTY: ".",
             1: player1,
             2: player2
-        }
+        })
 
     def play_turn(self, player: int, big_x: int, big_y: int, small_x: int, small_y: int) -> bool:
         if not { big_x, big_y, small_x, small_y } <= { 0, 1, 2 }:
@@ -46,26 +47,46 @@ class Board:
     def is_full(self) -> bool:
         return all(not self.check_small_board_valid(big_x, big_y) for big_x in range(3) for big_y in range(3))
 
-    def print(self, last_turn: tuple[int, int, int, int] | None = None) -> None:
+    def to_string(self, last_turn: tuple[int, int, int, int] | None = None) -> str:
         last_big_x, last_big_y, last_small_x, last_small_y = last_turn if last_turn is not None else (-1, -1, -1, -1)
+        result: str = "-" * 25 + "\n"
 
-        print("-" * 25)
+        big_str_map: dict[tuple[str, int], str] = {
+            ("X", 0): "\\   /",
+            ("X", 1):  "  X  ",
+            ("X", 2):  "/   \\",
+            ("O", 0): "⌈ ‾ ⌉",
+            ("O", 1): "|   |",
+            ("O", 2): "⌊ _ ⌋"
+        }
 
         for big_y in range(3):
             for small_y in range(3):
-                print("| ", end="")
+                result += "| "
 
                 for big_x in range(3):
+                    if self.player_symbols[self.big_board[big_y, big_x]] in "XO":
+                        result += Fore.GREEN + (mapped := big_str_map[(self.player_symbols[self.big_board[big_y, big_x]], small_y)]) + Style.RESET_ALL \
+                            if (big_x, big_y) == (last_big_x, last_big_y) \
+                            else mapped
+                        result += " | "
+                        continue
+
                     board_str: list[str] = [self.player_symbols[self.board[big_y, big_x, small_y, small_x]] for small_x in range(3)]
 
                     if (big_x, big_y, small_y) == (last_big_x, last_big_y, last_small_y):
                         board_str[last_small_x] = Fore.GREEN + board_str[last_small_x] + Style.RESET_ALL
 
-                    print(" ".join(board_str), end=" | ")
+                    result += " ".join(board_str) + " | "
 
-                print()
+                result += "\n"
 
-            print("-" * 25)
+            result += "-" * 25 + "\n"
+
+        return result
+
+    def __str__(self) -> str:
+        return self.to_string()
 
     @staticmethod
     def check_board_win(board: npt.NDArray[np.int8], player: int) -> bool:

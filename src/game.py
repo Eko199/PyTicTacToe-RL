@@ -41,7 +41,7 @@ class Game:
                 self.switch_player()
 
         self.print(last_turn)
-        print(f"{self.winner} wins!" if self.winner else "It's a tie!")
+        print(f"{self.board.player_symbols[self.winner]} wins the game!" if self.winner else "It's a tie!")
 
     def switch_player(self) -> None:
         self.current_player = self.player1 + self.player2 - self.current_player
@@ -74,18 +74,12 @@ class Game:
 
             if self.board.check_big_win(self.current_player):
                 self.winner = self.current_player
-                print(f"{self.board.player_symbols[self.winner]} wins the game!")
 
-        if not self.test_mode and self.board.check_small_board_valid(small_x, small_y):
-            self.next = small_x, small_y
-            return big_x, big_y, small_x, small_y
-
-        self.next = -1, -1
-
+        self.next = (small_x, small_y) if not self.test_mode and self.board.check_small_board_valid(small_x, small_y) else (-1, -1)
         return big_x, big_y, small_x, small_y
 
     def print(self, last_turn: tuple[int, int, int, int] | None = None) -> None:
-        self.board.print(last_turn)
+        print(self.board.to_string(last_turn))
 
     def save(self) -> None:
         choice = cond_input_or_quit(lambda x: x.lower()[0] in "yn", 

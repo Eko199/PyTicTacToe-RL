@@ -5,7 +5,7 @@ class HumanPlayer(Player):
         entered: str = input(prompt)
 
         while not entered.isdigit():
-            if entered.lower()[0] == "q":
+            if entered != "" and entered.lower()[0] == "q":
                 return None
 
             print("Invalid input!")
