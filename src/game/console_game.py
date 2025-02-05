@@ -57,7 +57,7 @@ class ConsoleGame(Game):
         print("Invalid move! Try again.")
 
     def render(self, last_turn: tuple[int, int, int, int] | None = None) -> None:
-        print(self.board.to_string(last_turn))
+        print(self.board.to_string(last_turn=last_turn, next=self.next))
 
     def successful_save(self):
         return print("Game saved successfully!")

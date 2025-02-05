@@ -56,7 +56,7 @@ class Board:
                 for small_y in range(3)
                 if self.big_board[big_y, big_x] == self.EMPTY and self.board[big_y, big_x, small_y, small_x] == self.EMPTY)
 
-    def to_string(self, last_turn: tuple[int, int, int, int] | None = None) -> str:
+    def to_string(self, *, last_turn: tuple[int, int, int, int] | None = None, next: tuple[int, int] | None = None) -> str:
         last_big_x, last_big_y, last_small_x, last_small_y = last_turn if last_turn is not None else (-1, -1, -1, -1)
         result: str = "-" * 25 + "\n"
 
@@ -65,7 +65,7 @@ class Board:
             ("X", 1):  "  X  ",
             ("X", 2):  "/   \\",
             ("O", 0): "⌈ ‾ ⌉",
-            ("O", 1): "|   |",
+            ("O", 1): "|   ⎸",
             ("O", 2): "⌊ _ ⌋"
         }
 
@@ -80,7 +80,11 @@ class Board:
                         result += " | "
                         continue
 
-                    board_str: list[str] = [self.player_symbols[self.board[big_y, big_x, small_y, small_x]] for small_x in range(3)]
+                    board_str: list[str] = [self.player_symbols[cell]
+                                            if (cell := self.board[big_y, big_x, small_y, small_x]) != self.EMPTY
+                                                or next not in { (-1, -1), (big_x, big_y) } 
+                                            else Fore.YELLOW + self.player_symbols[cell] + Style.RESET_ALL
+                                            for small_x in range(3)]
 
                     if (big_x, big_y, small_y) == (last_big_x, last_big_y, last_small_y):
                         board_str[last_small_x] = Fore.GREEN + board_str[last_small_x] + Style.RESET_ALL
