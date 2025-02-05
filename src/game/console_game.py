@@ -1,7 +1,8 @@
 from .game import Game
-from ..players.console_player import ConsolePlayer
 from ..players.player import Player
+from ..players.console_player import ConsolePlayer
 from ..players.random_player import RandomPlayer
+from ..players.ai_player import AIPlayer
 from ..utils import cond_input_or_quit
 
 class ConsoleGame(Game):
@@ -10,7 +11,7 @@ class ConsoleGame(Game):
 
         opponents: dict[int, Player] = {
             1: ConsolePlayer(),
-            2: RandomPlayer(),
+            2: AIPlayer("agent1"),
             3: RandomPlayer()
         }
         
@@ -38,7 +39,13 @@ class ConsoleGame(Game):
 
         while not self.board.is_full() and not self.winner:
             self.render(last_turn)
-            last_turn = self.play_turn()
+
+            try:
+                last_turn = self.play_turn()
+            except RuntimeError as e:
+                print(e)
+                self.save()
+                exit()
             
             if not self.test_mode:
                 self.switch_player()

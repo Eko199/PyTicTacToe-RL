@@ -3,8 +3,6 @@ from typing import Any
 import numpy as np
 from .board import Board
 from ..players.player import Player
-from ..players.console_player import HumanPlayer
-from ..players.random_player import RandomPlayer
 from ..saving.save_manager import save_json
 
 class Game(ABC):
@@ -27,26 +25,16 @@ class Game(ABC):
         self.current_player = self.player1 + self.player2 - self.current_player
 
     def play_turn(self) -> tuple[int, int, int, int]:
-        turn: tuple[int, int, int, int] | None = self.players[self.current_player].get_turn(self.next)
+        #Turn is guaranteed valid by Player
+        turn: tuple[int, int, int, int] | None = self.players[self.current_player].get_turn(self.next, self.board)
 
         if turn is None:
             self.save()
             exit()
         
         big_x, big_y, small_x, small_y = turn
-
-        while not self.board.play_turn(self.current_player, big_x, big_y, small_x, small_y):
-            if isinstance(self.players[self.current_player], HumanPlayer):
-                self.invalid_move()
-                turn = self.players[self.current_player].get_turn(self.next)
-
-                if turn is None:
-                    self.save()
-                    exit()
-                
-                big_x, big_y, small_x, small_y = turn
-            else:
-                big_x, big_y, small_x, small_y = RandomPlayer().get_turn(self.next)
+        if not self.board.play_turn(self.current_player, big_x, big_y, small_x, small_y):
+            raise RuntimeError("An unknown error occurred!")
 
         if self.board.check_small_win(self.current_player, big_x, big_y):
             if self.board.check_big_win(self.current_player):

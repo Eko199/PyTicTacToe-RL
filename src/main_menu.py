@@ -18,7 +18,7 @@ def main_menu(args: argparse.Namespace):
         print("1. New game")
         print("2. Load game")
 
-        choice: str = cond_input_or_quit(lambda x: x.isdigit() and 1 <= int(x) <= 2, "", "Invalid input. Please try again (1-2): ")
+        choice: str = cond_input_or_quit(lambda x: x.isdigit() and 1 <= int(x) <= 2, "", "Invalid input. Please try again (1 - 2): ")
 
         match int(choice):
             case 1:
@@ -39,7 +39,7 @@ def new_game(args: argparse.Namespace) -> Game:
     print("2. Play against radomized actions bot")
     print("3. Play against trained AI")
 
-    choice: str = cond_input_or_quit(lambda x: x.isdigit() and 1 <= int(x) <= 3, "", "Invalid input. Please try again (1-3): ")
+    choice: str = cond_input_or_quit(lambda x: x.isdigit() and 1 <= int(x) <= 3, "", "Invalid input. Please try again (1 - 3): ")
     return ConsoleGame(int(choice), test_mode=args.test)
 
 def load_game() -> Game | None:
