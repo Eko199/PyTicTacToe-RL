@@ -5,11 +5,11 @@ class ConsolePlayer(HumanPlayer):
     def get_int_or_quit(self, prompt: str) -> int | None:
         entered: str = input(prompt)
 
-        while not entered.isdigit() or int(entered) < 0 or int(entered) > 2:
+        while not entered.isdigit() or int(entered) < 1 or int(entered) > 3:
             if entered != "" and entered.lower()[0] == "q":
                 return None
 
-            print("Invalid input! (0 - 2)")
+            print("Invalid input! (1 - 3)")
             entered = input(prompt)
 
         return int(entered)
@@ -25,7 +25,7 @@ class ConsolePlayer(HumanPlayer):
         if y is None:
             return None
         
-        return x, y
+        return x - 1, y - 1
     
     def get_all_coordinates(self, next: tuple[int, int], board: Board) -> tuple[int, int, int, int] | None:
         if next == (-1, -1):
@@ -38,7 +38,7 @@ class ConsolePlayer(HumanPlayer):
             big_x, big_y = big_coord
             
             while board.big_board[big_y, big_x] != Board.EMPTY:
-                print(f"Big board ({big_x}, {big_y}) is already taken!")
+                print(f"Big board ({big_x + 1}, {big_y + 1}) is already taken!")
                 big_coord: tuple[int, int] | None = self.get_coordinates("big", next, board)
 
                 if big_coord is None:
@@ -47,7 +47,7 @@ class ConsolePlayer(HumanPlayer):
                 big_x, big_y = big_coord
         else:
             big_x, big_y = next
-            print(f"You must play in the ({big_x}, {big_y}) board!")
+            print(f"You must play in the ({big_x + 1}, {big_y + 1}) board!")
 
         small_coord: tuple[int, int] | None = self.get_coordinates("small", next, board)
 

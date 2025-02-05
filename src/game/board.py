@@ -58,20 +58,24 @@ class Board:
 
     def to_string(self, *, last_turn: tuple[int, int, int, int] | None = None, next: tuple[int, int] | None = None) -> str:
         last_big_x, last_big_y, last_small_x, last_small_y = last_turn if last_turn is not None else (-1, -1, -1, -1)
-        result: str = "-" * 25 + "\n"
 
         big_str_map: dict[tuple[str, int], str] = {
             ("X", 0): "\\   /",
             ("X", 1):  "  X  ",
             ("X", 2):  "/   \\",
             ("O", 0): "⌈ ‾ ⌉",
-            ("O", 1): "|   ⎸",
+            ("O", 1): "⎸   |",
             ("O", 2): "⌊ _ ⌋"
         }
 
+        result: str = "        1       2       3\n"
+        result += "      1 2 3   1 2 3   1 2 3\n"
+        result += "     " + "-" * 23 + "\n"
+    
         for big_y in range(3):
             for small_y in range(3):
-                result += "| "
+                result += str(big_y + 1) if small_y == 1 else " "
+                result += f" {small_y + 1} | "
 
                 for big_x in range(3):
                     if self.player_symbols[self.big_board[big_y, big_x]] in { "X", "O" }:
@@ -93,7 +97,7 @@ class Board:
 
                 result += "\n"
 
-            result += "-" * 25 + "\n"
+            result += "     " + "-" * 23 + "\n"
 
         return result
 
