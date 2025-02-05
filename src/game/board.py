@@ -8,7 +8,7 @@ class Board:
     EMPTY: int = 0
     FULL: int = -1
 
-    def __init__(self, player1: str = "X", player2: str = "O"):
+    def __init__(self, player1: str = "O", player2: str = "X"):
         self.board: NDArray[np.int8] = np.full((3, 3, 3, 3), self.EMPTY)
         self.big_board: NDArray[np.int8] = np.full((3, 3), self.EMPTY)
 
@@ -26,7 +26,7 @@ class Board:
 
         if self.big_board[big_y, big_x] != self.EMPTY or current_board[small_y, small_x] != self.EMPTY:
             return False
-        
+
         current_board[small_y, small_x] = player
 
         if Board.check_board_win(current_board, player):

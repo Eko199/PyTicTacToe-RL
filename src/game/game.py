@@ -6,7 +6,7 @@ from ..players.player import Player
 from ..saving.save_manager import save_json
 
 class Game(ABC):
-    def __init__(self, mode: int, *, test_mode: bool = False):
+    def __init__(self, mode: int, *, test_mode: bool = False, is_o: bool = True):
         self.test_mode: bool = test_mode
         self.mode = mode
 
@@ -18,14 +18,14 @@ class Game(ABC):
         self.board: Board = Board()
         self.next: tuple[int, int] = -1, -1
 
-        self.current_player: int = self.player1
+        self.current_player: int = self.player1 if is_o else self.player2
         self.winner: int | None = None
 
     def switch_player(self) -> None:
         self.current_player = self.player1 + self.player2 - self.current_player
 
     def play_turn(self) -> tuple[int, int, int, int]:
-        #Turn is guaranteed valid by Player
+        #Turn is guaranteed to be valid by Player
         turn: tuple[int, int, int, int] | None = self.players[self.current_player].get_turn(self.next, self.board)
 
         if turn is None:
