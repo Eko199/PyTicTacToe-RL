@@ -1,8 +1,8 @@
-from typing import Any
-import os.path
+import os
 import json
+from typing import Any
 
-SAVES_PATH: str = "saves\\"
+SAVES_PATH: str = "saves"
 
 def get_save_file_name() -> str:
     name = input("Enter file name: ")
@@ -10,7 +10,7 @@ def get_save_file_name() -> str:
     if not name.endswith(".json"):
         name += ".json"
 
-    return SAVES_PATH + name
+    return os.path.join(SAVES_PATH, name)
 
 def serialize_to(file_name: str, object: dict[str, Any]) -> None:
     if not os.path.exists(SAVES_PATH):

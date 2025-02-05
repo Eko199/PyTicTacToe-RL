@@ -1,3 +1,4 @@
+import os
 import random
 import numpy as np
 from numpy.typing import NDArray
@@ -8,10 +9,10 @@ def action_coordinates(action: int) -> tuple[int, int, int, int]:
     return (action % 9) // 3, (action // 9) // 3, action % 3, (action // 9) % 3
 
 class AIPlayer(Player):
-    MODELS_PATH = "src\\agent\\models\\"
+    MODELS_PATH = "src\\agent\\models"
 
     def __init__(self, model_name: str):
-        self.model: DQN = DQN.load(self.MODELS_PATH + model_name + ".zip")
+        self.model: DQN = DQN.load(os.path.join(self.MODELS_PATH, model_name + ".zip"))
 
     def get_turn(self, next: tuple[int, int], board: Board) -> tuple[int, int, int, int]:
         obs: NDArray[np.int8] = np.concatenate([
