@@ -65,10 +65,9 @@ class Board:
                 result += "| "
 
                 for big_x in range(3):
-                    if self.player_symbols[self.big_board[big_y, big_x]] in "XO":
-                        result += Fore.GREEN + (mapped := big_str_map[(self.player_symbols[self.big_board[big_y, big_x]], small_y)]) + Style.RESET_ALL \
-                            if (big_x, big_y) == (last_big_x, last_big_y) \
-                            else mapped
+                    if self.player_symbols[self.big_board[big_y, big_x]] in { "X", "O" }:
+                        mapped: str = big_str_map[(self.player_symbols[self.big_board[big_y, big_x]], small_y)]
+                        result += Fore.GREEN + mapped + Style.RESET_ALL if (big_x, big_y) == (last_big_x, last_big_y) else mapped
                         result += " | "
                         continue
 
