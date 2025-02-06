@@ -17,8 +17,10 @@ async def serialize_to(file_name: str, object: dict[str, Any]) -> None:
     if not os.path.exists(SAVES_PATH):
         os.mkdir(SAVES_PATH)
 
-    async with open(os.path.join(SAVES_PATH, file_name), "w") as file:
-        json.dump(object, file)
+    content: str = json.dumps(object)
+
+    async with aiofiles.open(os.path.join(SAVES_PATH, file_name), "w") as file:
+        await file.write(content)
 
 async def deserialize_from(file_name: str) -> dict[str, Any] | None:
     path: str = os.path.join(SAVES_PATH, file_name)
@@ -27,8 +29,10 @@ async def deserialize_from(file_name: str) -> dict[str, Any] | None:
         print("File doesn't exist.")
         return None
 
-    async with open(path, "r") as file:
-        return json.load(file)
+    async with aiofiles.open(path, "r") as file:
+        content: str = await file.read()
+    
+    return json.loads(content)
 
 async def save_json(object: dict[str, Any], file_name: str | None = None) -> None:
     await serialize_to(get_save_file_name() if file_name is None else file_name, object)

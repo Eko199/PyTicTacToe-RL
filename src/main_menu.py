@@ -5,13 +5,13 @@ from .game.console_game import ConsoleGame
 from .saving.save_manager import load_json
 from .utils import cond_input_or_quit
 
-def main_menu(args: argparse.Namespace):
+async def main_menu(args: argparse.Namespace):
     game: Game | None = None
 
     while game is None:
         if args.test:
             game = new_game(args)
-            game.play()
+            await game.play()
             continue
 
         print("Welcome to Mega Tic Tac Toe! At any time you wish to quit, just type 'q'. What would you like to do?")
@@ -24,13 +24,13 @@ def main_menu(args: argparse.Namespace):
             case 1:
                 game = new_game(args)
             case 2:
-                game = load_game()
+                game = await load_game()
             case _:
                 print("An unexpected error occurred. Exiting application.")
                 return
             
         if game is not None:
-            game.play()
+            await game.play()
 
 
 def new_game(args: argparse.Namespace) -> Game:
@@ -44,9 +44,9 @@ def new_game(args: argparse.Namespace) -> Game:
 
     return ConsoleGame(int(choice), test_mode=args.test)
 
-def load_game() -> Game | None:
+async def load_game() -> Game | None:
     try:
-        data: dict[str, Any] | None = load_json()
+        data: dict[str, Any] | None = await load_json()
         return ConsoleGame.load(data) if data is not None else None
     except OSError as e:
         print(e)

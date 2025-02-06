@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import Any
+from asyncio import create_task
 import numpy as np
 from .board import Board
 from ..players.player import Player
-from ..saving.save_manager import save_json, serialize_to
+from ..saving.save_manager import save_json
 
 class Game(ABC):
     def __init__(self, mode: int, *, test_mode: bool = False, is_o: bool = True, auto_save: bool = True):
@@ -27,12 +28,12 @@ class Game(ABC):
     def switch_player(self) -> None:
         self.current_player = self.player1 + self.player2 - self.current_player
 
-    def play_turn(self) -> tuple[int, int, int, int]:
+    async def play_turn(self) -> tuple[int, int, int, int]:
         #Turn is guaranteed to be valid by Player
         turn: tuple[int, int, int, int] | None = self.players[self.current_player].get_turn(self.next, self.board)
 
         if turn is None:
-            self.save()
+            await self.save()
             exit()
         
         big_x, big_y, small_x, small_y = turn
@@ -46,7 +47,7 @@ class Game(ABC):
         self.next = (small_x, small_y) if not self.test_mode and self.board.check_small_board_valid(small_x, small_y) else (-1, -1)
 
         if self.auto_save and self.turns > 0 and self.turns % 5 == 0:
-            Game.save(self, "autosave.json")
+            create_task(Game.save(self, "autosave.json"))
         
         self.turns += 1
         return big_x, big_y, small_x, small_y
@@ -60,15 +61,15 @@ class Game(ABC):
             "mode": self.mode
         }
 
-    def save(self, file_name: str | None = None) -> None:
+    async def save(self, file_name: str | None = None) -> None:
         try:
-            save_json(self.to_json(), file_name)
+            await save_json(self.to_json(), file_name)
             self.successful_save()
         except OSError as e:
             print(e)
 
     @abstractmethod
-    def play(self) -> None:
+    async def play(self) -> None:
         pass
 
     @abstractmethod

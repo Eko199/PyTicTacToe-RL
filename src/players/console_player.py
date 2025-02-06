@@ -66,6 +66,7 @@ class ConsolePlayer(HumanPlayer):
         big_x, big_y, small_x, small_y = coordinates
 
         while board.board[big_y, big_x, small_y, small_x] != Board.EMPTY:
+            print("Invalid move!")
             coordinates: tuple[int, int, int, int] | None = self.get_all_coordinates(next, board)
 
             if coordinates is None:

@@ -49,8 +49,8 @@ class Board:
         return all(not self.check_small_board_valid(big_x, big_y) for big_x in range(3) for big_y in range(3))
     
     def valid_moves(self, next: tuple[int, int]) -> Generator[tuple[int, int, int, int], None, None] :
-        return ((big_x, big_y, small_x, small_y)
-                for big_x, big_y, small_x, small_y in np.argwhere(self.board == Board.EMPTY)
+        return ((int(big_x), int(big_y), int(small_x), int(small_y))
+                for big_y, big_x, small_y, small_x in np.argwhere(self.board == Board.EMPTY)
                 if next in { (-1, -1), (big_x, big_y) } and self.big_board[big_y, big_x] == self.EMPTY)
 
     def to_string(self, *, last_turn: tuple[int, int, int, int] | None = None, next: tuple[int, int] | None = None) -> str:

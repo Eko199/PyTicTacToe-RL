@@ -11,8 +11,8 @@ class ConsoleGame(Game):
 
         opponents: dict[int, Player] = {
             1: ConsolePlayer(),
-            2: AIPlayer("agent1"),
-            3: RandomPlayer()
+            2: RandomPlayer(),
+            3: AIPlayer("agent1")
         }
         
         self.players: dict[int, Player] = {
@@ -20,11 +20,11 @@ class ConsoleGame(Game):
             self.player2: opponents[mode]
         }
 
-    def play_turn(self) -> tuple[int, int, int, int]:
+    async def play_turn(self) -> tuple[int, int, int, int]:
         print(f"{self.board.player_symbols[self.current_player]}'s turn!")
-        return super().play_turn()
+        return await super().play_turn()
 
-    def save(self, file_name: str | None = None) -> None:
+    async def save(self, file_name: str | None = None) -> None:
         choice = cond_input_or_quit(lambda x: x != "" and x.lower()[0] in "yn", 
                                     "Would you like to save the game? (y/n) ", 
                                     "Invalid input!\nWould you like to save the game? (y/n) ")
@@ -32,19 +32,19 @@ class ConsoleGame(Game):
         if choice == "n":
             return
         
-        super().save(file_name)
+        await super().save(file_name)
 
-    def play(self) -> None:
+    async def play(self) -> None:
         last_turn: tuple[int, int, int, int] | None = None
 
         while not self.board.is_full() and not self.winner:
             self.render(last_turn)
 
             try:
-                last_turn = self.play_turn()
+                last_turn = await self.play_turn()
             except RuntimeError as e:
                 print(e)
-                self.save()
+                await self.save()
                 exit()
             
             if not self.test_mode:
