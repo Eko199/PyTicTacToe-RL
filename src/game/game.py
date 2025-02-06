@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any
-from asyncio import create_task
+import asyncio
 import numpy as np
 from .board import Board
 from ..players.player import Player
@@ -24,6 +24,7 @@ class Game(ABC):
 
         self.auto_save: bool = auto_save
         self.turns: int = 0
+        self.tasks: set[asyncio.Task] = set()
 
     def switch_player(self) -> None:
         self.current_player = self.player1 + self.player2 - self.current_player
@@ -47,7 +48,8 @@ class Game(ABC):
         self.next = (small_x, small_y) if not self.test_mode and self.board.check_small_board_valid(small_x, small_y) else (-1, -1)
 
         if self.auto_save and self.turns > 0 and self.turns % 5 == 0:
-            create_task(Game.save(self, "autosave.json"))
+            self.tasks.add(asyncio.create_task(Game.save(self, "autosave.json")))
+            await asyncio.sleep(0.1)
         
         self.turns += 1
         return big_x, big_y, small_x, small_y
@@ -64,7 +66,9 @@ class Game(ABC):
     async def save(self, file_name: str | None = None) -> None:
         try:
             await save_json(self.to_json(), file_name)
-            self.successful_save()
+
+            if file_name is None or not file_name.startswith("autosave"):
+                self.successful_save()
         except OSError as e:
             print(e)
 

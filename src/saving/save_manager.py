@@ -19,10 +19,17 @@ async def serialize_to(file_name: str, object: dict[str, Any]) -> None:
 
     content: str = json.dumps(object)
 
+    if not file_name.endswith(".json"):
+        file_name += ".json"
+
+
     async with aiofiles.open(os.path.join(SAVES_PATH, file_name), "w") as file:
         await file.write(content)
 
 async def deserialize_from(file_name: str) -> dict[str, Any] | None:
+    if not file_name.endswith(".json"):
+        file_name += ".json"
+    
     path: str = os.path.join(SAVES_PATH, file_name)
 
     if not os.path.exists(path):

@@ -6,8 +6,8 @@ from ..players.ai_player import AIPlayer
 from ..utils import cond_input_or_quit
 
 class ConsoleGame(Game):
-    def __init__(self, mode: int, *, test_mode: bool = False):
-        super().__init__(mode, test_mode=test_mode)
+    def __init__(self, mode: int, *, test_mode: bool = False, is_o: bool = True, auto_save: bool = True):
+        super().__init__(mode, test_mode=test_mode, is_o=is_o, auto_save=auto_save)
 
         opponents: dict[int, Player] = {
             1: ConsolePlayer(),
