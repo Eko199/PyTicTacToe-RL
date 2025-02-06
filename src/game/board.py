@@ -49,12 +49,9 @@ class Board:
         return all(not self.check_small_board_valid(big_x, big_y) for big_x in range(3) for big_y in range(3))
     
     def valid_moves(self, next: tuple[int, int]) -> Generator[tuple[int, int, int, int], None, None] :
-        return ((big_x, big_y, small_x, small_y) 
-                for big_x in (range(3) if next[0] == -1 else [next[0]]) 
-                for big_y in (range(3) if next[1] == -1 else [next[1]])
-                for small_x in range(3)
-                for small_y in range(3)
-                if self.big_board[big_y, big_x] == self.EMPTY and self.board[big_y, big_x, small_y, small_x] == self.EMPTY)
+        return ((big_x, big_y, small_x, small_y)
+                for big_x, big_y, small_x, small_y in np.argwhere(self.board == Board.EMPTY)
+                if next in { (-1, -1), (big_x, big_y) } and self.big_board[big_y, big_x] == self.EMPTY)
 
     def to_string(self, *, last_turn: tuple[int, int, int, int] | None = None, next: tuple[int, int] | None = None) -> str:
         last_big_x, last_big_y, last_small_x, last_small_y = last_turn if last_turn is not None else (-1, -1, -1, -1)
@@ -68,9 +65,11 @@ class Board:
             ("O", 2): "⌊ _ ⌋"
         }
 
+        horizontal: str = "     " + "-" * 23 + "\n"
+
         result: str = "        1       2       3\n"
         result += "      1 2 3   1 2 3   1 2 3\n"
-        result += "     " + "-" * 23 + "\n"
+        result += horizontal
     
         for big_y in range(3):
             for small_y in range(3):
@@ -79,7 +78,7 @@ class Board:
 
                 for big_x in range(3):
                     if self.player_symbols[self.big_board[big_y, big_x]] in { "X", "O" }:
-                        mapped: str = big_str_map[(self.player_symbols[self.big_board[big_y, big_x]], small_y)]
+                        mapped: str = big_str_map[self.player_symbols[self.big_board[big_y, big_x]], small_y]
                         result += Fore.GREEN + mapped + Style.RESET_ALL if (big_x, big_y) == (last_big_x, last_big_y) else mapped
                         result += " | "
                         continue
@@ -97,7 +96,7 @@ class Board:
 
                 result += "\n"
 
-            result += "     " + "-" * 23 + "\n"
+            result += horizontal
 
         return result
 

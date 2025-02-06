@@ -24,7 +24,7 @@ class ConsoleGame(Game):
         print(f"{self.board.player_symbols[self.current_player]}'s turn!")
         return super().play_turn()
 
-    def save(self) -> None:
+    def save(self, file_name: str | None = None) -> None:
         choice = cond_input_or_quit(lambda x: x != "" and x.lower()[0] in "yn", 
                                     "Would you like to save the game? (y/n) ", 
                                     "Invalid input!\nWould you like to save the game? (y/n) ")
@@ -32,7 +32,7 @@ class ConsoleGame(Game):
         if choice == "n":
             return
         
-        super().save()
+        super().save(file_name)
 
     def play(self) -> None:
         last_turn: tuple[int, int, int, int] | None = None

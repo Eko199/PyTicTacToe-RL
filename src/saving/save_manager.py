@@ -1,5 +1,6 @@
 import os
 import json
+import aiofiles
 from typing import Any
 
 SAVES_PATH: str = "saves"
@@ -10,25 +11,27 @@ def get_save_file_name() -> str:
     if not name.endswith(".json"):
         name += ".json"
 
-    return os.path.join(SAVES_PATH, name)
+    return name
 
-def serialize_to(file_name: str, object: dict[str, Any]) -> None:
+async def serialize_to(file_name: str, object: dict[str, Any]) -> None:
     if not os.path.exists(SAVES_PATH):
         os.mkdir(SAVES_PATH)
 
-    with open(file_name, "w") as file:
+    async with open(os.path.join(SAVES_PATH, file_name), "w") as file:
         json.dump(object, file)
 
-def deserialize_from(file_name: str) -> dict[str, Any] | None:
-    if not os.path.exists(file_name):
+async def deserialize_from(file_name: str) -> dict[str, Any] | None:
+    path: str = os.path.join(SAVES_PATH, file_name)
+
+    if not os.path.exists(path):
         print("File doesn't exist.")
         return None
 
-    with open(file_name, "r") as file:
+    async with open(path, "r") as file:
         return json.load(file)
 
-def save_json(object: dict[str, Any]) -> None:
-    serialize_to(get_save_file_name(), object)
+async def save_json(object: dict[str, Any], file_name: str | None = None) -> None:
+    await serialize_to(get_save_file_name() if file_name is None else file_name, object)
 
-def load_json() -> dict[str, Any] | None:
-    return deserialize_from(get_save_file_name())
+async def load_json() -> dict[str, Any] | None:
+    return await deserialize_from(get_save_file_name())

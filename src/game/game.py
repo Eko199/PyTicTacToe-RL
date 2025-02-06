@@ -3,10 +3,10 @@ from typing import Any
 import numpy as np
 from .board import Board
 from ..players.player import Player
-from ..saving.save_manager import save_json
+from ..saving.save_manager import save_json, serialize_to
 
 class Game(ABC):
-    def __init__(self, mode: int, *, test_mode: bool = False, is_o: bool = True):
+    def __init__(self, mode: int, *, test_mode: bool = False, is_o: bool = True, auto_save: bool = True):
         self.test_mode: bool = test_mode
         self.mode = mode
 
@@ -20,6 +20,9 @@ class Game(ABC):
 
         self.current_player: int = self.player1 if is_o else self.player2
         self.winner: int | None = None
+
+        self.auto_save: bool = auto_save
+        self.turns: int = 0
 
     def switch_player(self) -> None:
         self.current_player = self.player1 + self.player2 - self.current_player
@@ -41,19 +44,25 @@ class Game(ABC):
                 self.winner = self.current_player
 
         self.next = (small_x, small_y) if not self.test_mode and self.board.check_small_board_valid(small_x, small_y) else (-1, -1)
-        return big_x, big_y, small_x, small_y
 
-    def save(self) -> None:
-        data: dict[str, Any] = {
+        if self.auto_save and self.turns > 0 and self.turns % 5 == 0:
+            Game.save(self, "autosave.json")
+        
+        self.turns += 1
+        return big_x, big_y, small_x, small_y
+    
+    def to_json(self) -> dict[str, list | tuple | int]:
+        return {
             "board": self.board.board.tolist(), 
             "big_board": self.board.big_board.tolist(), 
             "current_player": self.current_player,
             "next": self.next,
             "mode": self.mode
         }
-        
+
+    def save(self, file_name: str | None = None) -> None:
         try:
-            save_json(data)
+            save_json(self.to_json(), file_name)
             self.successful_save()
         except OSError as e:
             print(e)
@@ -80,6 +89,6 @@ class Game(ABC):
         game.board.board = np.array(data["board"])
         game.board.big_board = np.array(data["big_board"])
         game.current_player = data["current_player"]
-        game.next = data["next"]
+        game.next = (data["next"][0], data["next"][1])
 
         return game
