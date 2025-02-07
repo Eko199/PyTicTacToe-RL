@@ -3,22 +3,22 @@ from ..players.player import Player
 from ..players.console_player import ConsolePlayer
 from ..players.random_player import RandomPlayer
 from ..players.ai_player import AIPlayer
-from ..utils import cond_input_or_quit
 from ..agent.choose_agent import choose_agent
+from ..utils import cond_input_or_quit
 
 class ConsoleGame(Game):
     def __init__(self, mode: int, *, test_mode: bool = False, is_o: bool = True, auto_save: bool = True, agent_name: str = ""):
-        super().__init__(mode, test_mode=test_mode, is_o=is_o, auto_save=auto_save, agent_name=agent_name)
+        super().__init__(mode, test_mode=test_mode, auto_save=auto_save, agent_name=agent_name)
 
         opponents: dict[int, Player] = {
             1: ConsolePlayer(),
             2: RandomPlayer(),
-            3: AIPlayer(agent_name)
+            3: AIPlayer(agent_name) if agent_name != "" else RandomPlayer()
         }
         
         self.players: dict[int, Player] = {
-            self.player1: ConsolePlayer(),
-            self.player2: opponents[mode]
+            self.player1: ConsolePlayer() if is_o else opponents[mode],
+            self.player2: opponents[mode] if is_o else ConsolePlayer()
         }
 
     async def play_turn(self) -> tuple[int, int, int, int]:

@@ -6,7 +6,7 @@ from ..players.player import Player
 from ..saving.save_manager import save_json
 
 class Game:
-    def __init__(self, mode: int, *, test_mode: bool = False, is_o: bool = True, auto_save: bool = True, agent_name: str = ""):
+    def __init__(self, mode: int, *, test_mode: bool = False, auto_save: bool = True, agent_name: str = ""):
         self.test_mode: bool = test_mode
         self.mode: int = mode
         self.agent_name: str = agent_name
@@ -19,7 +19,7 @@ class Game:
         self.board: Board = Board()
         self.next: tuple[int, int] = -1, -1
 
-        self.current_player: int = self.player1 if is_o else self.player2
+        self.current_player: int = self.player1
         self.winner: int | None = None
 
         self.auto_save: bool = auto_save

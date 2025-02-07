@@ -1,11 +1,10 @@
 import os.path
 from stable_baselines3 import DQN
 from gymnasium.wrappers import FlattenObservation
+from .models_path import MODELS_PATH
 from .tictactoe_env import TicTacToeEnv
 from ..players.random_player import RandomPlayer
 from ..players.ai_player import AIPlayer
-
-MODELS_PATH = "src\\agent\\models"
 
 def train_model(name: str, steps: int, is_o: bool):
     env = FlattenObservation(TicTacToeEnv([RandomPlayer()], train_x=False)) \
@@ -25,4 +24,4 @@ def train_model(name: str, steps: int, is_o: bool):
     )
 
     model.learn(total_timesteps=steps)
-    model.save(os.path.join(MODELS_PATH, name))
+    model.save(os.path.join(MODELS_PATH, ("o_" if is_o else "x_") + name))

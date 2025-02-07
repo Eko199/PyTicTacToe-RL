@@ -3,6 +3,7 @@ import argparse
 from .game.game import Game
 from .game.console_game import ConsoleGame
 from .saving.save_manager import load_json
+from .agent.training import train_model
 from .utils import cond_input_or_quit
 
 async def main_menu(args: argparse.Namespace):
@@ -16,14 +17,17 @@ async def main_menu(args: argparse.Namespace):
         print("Welcome to Mega Tic Tac Toe! At any time you wish to quit, just type 'q'. What would you like to do?")
         print("1. New game")
         print("2. Load game")
+        print("3. Train model")
 
-        choice: str = cond_input_or_quit(lambda x: x.isdigit() and 1 <= int(x) <= 2, "", "Invalid input. Please try again (1 - 2): ")
+        choice: str = cond_input_or_quit(lambda x: x.isdigit() and 1 <= int(x) <= 3, "", "Invalid input. Please try again (1 - 3): ")
 
         match int(choice):
             case 1:
                 game = ConsoleGame.create_game(test_mode=args.test)
             case 2:
                 game = await load_game()
+            case 3:
+                train_menu()
             case _:
                 print("An unexpected error occurred. Exiting application.")
                 return
@@ -39,4 +43,12 @@ async def load_game() -> Game | None:
         print(e)
         
     return None
+
+def train_menu() -> None:
+    name: str = input("Enter model name: ")
+    steps: int = int(cond_input_or_quit(lambda x: x.isdigit() and int(x) > 0, "Enter training steps (3M+ recommended): "))
+    is_o: bool = cond_input_or_quit(lambda x: x.lower() in { "1", "2", "x", "o" }, "Train as O (1st) or X (2nd)? ") in "1o"
+
+    train_model(name, steps, is_o)
+    print("Training completed!")
     

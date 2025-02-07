@@ -5,7 +5,7 @@ from numpy.typing import NDArray
 from stable_baselines3 import DQN
 from .bot_player import BotPlayer
 from ..game.board import Board
-from ..agent.training import MODELS_PATH
+from ..agent.models_path import MODELS_PATH
 from ..agent.tictactoe_env import action_coordinates
 
 class AIPlayer(BotPlayer):

@@ -1,4 +1,4 @@
-from game.board import Board
+from ..game.board import Board
 from .player import Player, ABC, abstractmethod
 
 class BotPlayer(Player, ABC):
