@@ -3,14 +3,12 @@ import random
 import numpy as np
 from numpy.typing import NDArray
 from stable_baselines3 import DQN
-from .player import Player, Board
+from .bot_player import BotPlayer
+from ..game.board import Board
 from ..agent.training import MODELS_PATH
-    
-def action_coordinates(action: int) -> tuple[int, int, int, int]:
-    return (action % 9) // 3, (action // 9) // 3, action % 3, (action // 9) % 3
+from ..agent.tictactoe_env import action_coordinates
 
-class AIPlayer(Player):
-
+class AIPlayer(BotPlayer):
     def __init__(self, model_name: str):
         self.model: DQN = DQN.load(os.path.join(MODELS_PATH, model_name))
 

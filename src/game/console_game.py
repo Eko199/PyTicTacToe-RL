@@ -47,9 +47,6 @@ class ConsoleGame(Game):
                 print(e)
                 await self.save()
                 exit()
-            
-            if not self.test_mode:
-                self.switch_player()
 
         self.render(last_turn)
         print(f"{self.board.player_symbols[self.winner]} wins the game!" if self.winner else "It's a tie!")
@@ -60,7 +57,7 @@ class ConsoleGame(Game):
     def render(self, last_turn: tuple[int, int, int, int] | None = None) -> None:
         print(self.board.to_string(last_turn=last_turn, next=self.next))
 
-    def successful_save(self):
+    def successful_save(self) -> None:
         return print("Game saved successfully!")
     
     @classmethod

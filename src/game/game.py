@@ -1,4 +1,3 @@
-from abc import ABC, abstractmethod
 from typing import Any
 import asyncio
 import numpy as np
@@ -6,7 +5,7 @@ from .board import Board
 from ..players.player import Player
 from ..saving.save_manager import save_json
 
-class Game(ABC):
+class Game:
     def __init__(self, mode: int, *, test_mode: bool = False, is_o: bool = True, auto_save: bool = True, agent_name: str = ""):
         self.test_mode: bool = test_mode
         self.mode: int = mode
@@ -30,6 +29,20 @@ class Game(ABC):
     def switch_player(self) -> None:
         self.current_player = self.player1 + self.player2 - self.current_player
 
+    def take_turn(self, big_x, big_y, small_x, small_y):
+        if self.next not in { (-1, -1), (big_x, big_y) } or not self.board.play_turn(self.current_player, big_x, big_y, small_x, small_y):
+            raise RuntimeError("An unknown error occurred!")
+
+        if self.board.check_small_win(self.current_player, big_x, big_y):
+            if self.board.check_big_win(self.current_player):
+                self.winner = self.current_player
+
+        self.next = (small_x, small_y) if not self.test_mode and self.board.check_small_board_valid(small_x, small_y) else (-1, -1)
+        self.turns += 1
+
+        if not self.test_mode:
+            self.switch_player()
+
     async def play_turn(self) -> tuple[int, int, int, int]:
         #Turn is guaranteed to be valid by Player
         turn: tuple[int, int, int, int] | None = self.players[self.current_player].get_turn(self.next, self.board)
@@ -39,20 +52,12 @@ class Game(ABC):
             exit()
         
         big_x, big_y, small_x, small_y = turn
-        if not self.board.play_turn(self.current_player, big_x, big_y, small_x, small_y):
-            raise RuntimeError("An unknown error occurred!")
-
-        if self.board.check_small_win(self.current_player, big_x, big_y):
-            if self.board.check_big_win(self.current_player):
-                self.winner = self.current_player
-
-        self.next = (small_x, small_y) if not self.test_mode and self.board.check_small_board_valid(small_x, small_y) else (-1, -1)
+        self.take_turn(big_x, big_y, small_x, small_y)
 
         if self.auto_save and self.turns > 0 and self.turns % 5 == 0:
             self.tasks.add(asyncio.create_task(Game.save(self, "autosave.json")))
             await asyncio.sleep(0.1)
         
-        self.turns += 1
         return big_x, big_y, small_x, small_y
     
     def to_json(self) -> dict[str, list | tuple | int | str]:
@@ -74,20 +79,16 @@ class Game(ABC):
         except OSError as e:
             print(e)
 
-    @abstractmethod
     async def play(self) -> None:
         pass
 
-    @abstractmethod
     def invalid_move(self) -> None:
         pass
 
-    @abstractmethod
     def render(self, last_turn: tuple[int, int, int, int] | None = None) -> None:
         pass
 
-    @abstractmethod
-    def successful_save(self):
+    def successful_save(self) -> None:
         pass
 
     @classmethod
