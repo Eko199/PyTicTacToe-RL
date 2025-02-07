@@ -4,15 +4,13 @@ from .game.game import Game
 from .game.console_game import ConsoleGame
 from .saving.save_manager import load_json
 from .utils import cond_input_or_quit
-from .agent.choose_agent import choose_agent
 
 async def main_menu(args: argparse.Namespace):
     game: Game | None = None
 
     while game is None:
         if args.test:
-            game = new_game(args)
-            await game.play()
+            game = ConsoleGame.create_game(test_mode=args.test)
             continue
 
         print("Welcome to Mega Tic Tac Toe! At any time you wish to quit, just type 'q'. What would you like to do?")
@@ -23,7 +21,7 @@ async def main_menu(args: argparse.Namespace):
 
         match int(choice):
             case 1:
-                game = new_game(args)
+                game = ConsoleGame.create_game(test_mode=args.test)
             case 2:
                 game = await load_game()
             case _:
@@ -32,21 +30,6 @@ async def main_menu(args: argparse.Namespace):
             
         if game is not None:
             await game.play()
-
-
-def new_game(args: argparse.Namespace) -> Game:
-    print("Choose gamemode:")
-    print("1. Play hot-seat multiplayer")
-    print("2. Play against radomized actions bot")
-    print("3. Play against trained AI")
-
-    mode: int = int(cond_input_or_quit(lambda x: x.isdigit() and 1 <= int(x) <= 3, "", "Invalid input. Please try again (1 - 3): "))
-    is_o: bool = cond_input_or_quit(lambda x: x.lower() in { "o", "x", "1", "2" }, "Play as O (1st) or X (2nd)? ", "Invalid input! O or X: ") in "o1"
-
-    if mode == 3:
-        agent_name: str | None = choose_agent(not is_o)
-
-    return ConsoleGame(mode, test_mode=args.test, is_o=is_o)
 
 async def load_game() -> Game | None:
     try:

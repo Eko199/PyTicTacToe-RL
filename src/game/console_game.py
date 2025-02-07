@@ -4,15 +4,16 @@ from ..players.console_player import ConsolePlayer
 from ..players.random_player import RandomPlayer
 from ..players.ai_player import AIPlayer
 from ..utils import cond_input_or_quit
+from ..agent.choose_agent import choose_agent
 
 class ConsoleGame(Game):
-    def __init__(self, mode: int, *, test_mode: bool = False, is_o: bool = True, auto_save: bool = True):
-        super().__init__(mode, test_mode=test_mode, is_o=is_o, auto_save=auto_save)
+    def __init__(self, mode: int, *, test_mode: bool = False, is_o: bool = True, auto_save: bool = True, agent_name: str = ""):
+        super().__init__(mode, test_mode=test_mode, is_o=is_o, auto_save=auto_save, agent_name=agent_name)
 
         opponents: dict[int, Player] = {
             1: ConsolePlayer(),
             2: RandomPlayer(),
-            3: AIPlayer("agent1")
+            3: AIPlayer(agent_name)
         }
         
         self.players: dict[int, Player] = {
@@ -61,3 +62,23 @@ class ConsoleGame(Game):
 
     def successful_save(self):
         return print("Game saved successfully!")
+    
+    @classmethod
+    def create_game(cls, *, test_mode: bool = False):
+        agent_name: str = ""
+
+        while agent_name == "":
+            print("Choose gamemode:")
+            print("1. Play hot-seat multiplayer")
+            print("2. Play against radomized actions bot")
+            print("3. Play against trained AI")
+
+            mode: int = int(cond_input_or_quit(lambda x: x.isdigit() and 1 <= int(x) <= 3, "", "Invalid input. Please try again (1 - 3): "))
+            is_o: bool = cond_input_or_quit(lambda x: x.lower() in { "o", "x", "1", "2" }, "Play as O (1st) or X (2nd)? ", "Invalid input! O or X: ") in "o1"
+
+            if mode != 3:
+                break
+
+            agent_name: str = choose_agent(not is_o)
+
+        return cls(mode, test_mode=test_mode, is_o=is_o, agent_name=agent_name)

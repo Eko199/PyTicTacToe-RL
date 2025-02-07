@@ -7,9 +7,10 @@ from ..players.player import Player
 from ..saving.save_manager import save_json
 
 class Game(ABC):
-    def __init__(self, mode: int, *, test_mode: bool = False, is_o: bool = True, auto_save: bool = True):
+    def __init__(self, mode: int, *, test_mode: bool = False, is_o: bool = True, auto_save: bool = True, agent_name: str = ""):
         self.test_mode: bool = test_mode
-        self.mode = mode
+        self.mode: int = mode
+        self.agent_name: str = agent_name
 
         self.player1: int = 1
         self.player2: int = 2
@@ -54,13 +55,14 @@ class Game(ABC):
         self.turns += 1
         return big_x, big_y, small_x, small_y
     
-    def to_json(self) -> dict[str, list | tuple | int]:
+    def to_json(self) -> dict[str, list | tuple | int | str]:
         return {
             "board": self.board.board.tolist(), 
             "big_board": self.board.big_board.tolist(), 
             "current_player": self.current_player,
             "next": self.next,
-            "mode": self.mode
+            "mode": self.mode,
+            "agent_name": self.agent_name
         }
 
     async def save(self, file_name: str | None = None) -> None:
@@ -90,7 +92,7 @@ class Game(ABC):
 
     @classmethod
     def load(cls, data: dict[str, Any]):
-        game = cls(data["mode"])
+        game = cls(data["mode"], agent_name=data["agent_name"])
         game.board.board = np.array(data["board"])
         game.board.big_board = np.array(data["big_board"])
         game.current_player = data["current_player"]
