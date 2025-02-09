@@ -24,8 +24,8 @@ async def main_menu(args: argparse.Namespace):
             game = ConsoleGame.create_game(test_mode=args.test)
             continue
 
-        print("Welcome to Mega Tic Tac Toe! At any time you wish to quit, just type 'q'. \
-              What would you like to do?")
+        print("Welcome to Mega Tic Tac Toe! At any time you wish to quit, just type 'q'. " +
+              "What would you like to do?")
         print("1. New game")
         print("2. Load game")
         print("3. Train model")
