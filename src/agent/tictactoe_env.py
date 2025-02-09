@@ -81,7 +81,7 @@ class TicTacToeEnv(gym.Env):
         self.opponent: BotPlayer = random.choice(self.opponents)
         self.win_reward: int = 100
 
-        if not self.train_x:
+        if self.train_x:
             big_x, big_y, small_x, small_y = self.opponent.get_turn(self.game.next, self.game.board)
             self.game.take_turn(big_x, big_y, small_x, small_y)
 

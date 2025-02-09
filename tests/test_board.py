@@ -1,9 +1,17 @@
+"""
+Unit tests for the Board class.
+"""
+
 import unittest
 import itertools as it
 import numpy.testing as npt
 from src.tictactoe.board import Board
 
 class TestBoard(unittest.TestCase):
+    """
+    Test cases for the Board class.
+    """
+
     def setUp(self):
         self.board = Board()
 
@@ -103,6 +111,10 @@ class TestBoard(unittest.TestCase):
 
         self.assertCountEqual(valid_moves, all_moves)
         self.assertSetEqual(valid_moves, all_moves)
+
+    def test_to_string_works(self):
+        board_str_len: int = len(self.board.to_string())
+        self.assertGreater(board_str_len, 81)
 
     def win_small_board(self, player: int, x: int, y: int):
         self.board.play_turn(player, x, y, 0, 0)
