@@ -1,3 +1,7 @@
+"""
+This module contains the main menu for the Mega Tic Tac Toe game.
+"""
+
 from typing import Any
 import argparse
 from .game.game import Game
@@ -7,6 +11,12 @@ from .agent.training import train_model
 from .utils import cond_input_or_quit
 
 async def main_menu(args: argparse.Namespace):
+    """
+    Displays the main menu and handles user input.
+
+    Args:
+        args (argparse.Namespace): The command-line arguments.
+    """
     game: Game | None = None
 
     while game is None:
@@ -36,6 +46,12 @@ async def main_menu(args: argparse.Namespace):
             await game.play()
 
 async def load_game() -> Game | None:
+    """
+    Loads a saved game.
+
+    Returns:
+        Game | None: The loaded game or None if loading failed.
+    """
     try:
         data: dict[str, Any] | None = await load_json()
         return ConsoleGame.load(data) if data is not None else None
@@ -45,10 +61,12 @@ async def load_game() -> Game | None:
     return None
 
 def train_menu() -> None:
+    """
+    Displays the training menu and handles user input for training a model.
+    """
     name: str = input("Enter model name: ")
     steps: int = int(cond_input_or_quit(lambda x: x.isdigit() and int(x) > 0, "Enter training steps (3M+ recommended): "))
     is_o: bool = cond_input_or_quit(lambda x: x.lower() in { "1", "2", "x", "o" }, "Train as O (1st) or X (2nd)? ") in "1o"
 
     train_model(name, steps, is_o)
     print("Training completed!")
-    

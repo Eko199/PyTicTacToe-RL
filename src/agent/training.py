@@ -1,3 +1,7 @@
+"""
+This module contains functions for training AI models for Mega Tic Tac Toe.
+"""
+
 import os.path
 from stable_baselines3 import DQN
 from gymnasium.wrappers import FlattenObservation
@@ -7,6 +11,15 @@ from ..players.random_player import RandomPlayer
 from ..players.ai_player import AIPlayer
 
 def train_model(name: str, steps: int, is_o: bool):
+    """
+    Trains an AI model to play Mega Tic Tac Toe using a Deep Q-Network.
+
+    Args:
+        name (str): The name of the model.
+        steps (int): The number of training games.
+        is_o (bool): Whether the model is trained as player O.
+    """
+    # DQN doesn't support environments with a dictionary observations
     env = FlattenObservation(TicTacToeEnv([RandomPlayer()], train_x=False)) \
         if is_o \
         else FlattenObservation(TicTacToeEnv([RandomPlayer(), AIPlayer("o_trainer1")], train_x=True))
