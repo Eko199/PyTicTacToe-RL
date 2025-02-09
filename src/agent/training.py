@@ -23,7 +23,10 @@ def train_model(name: str, steps: int, is_o: bool):
     # DQN doesn't support environments with a dictionary observations
     env: gym.Env = FlattenObservation(TicTacToeEnv([RandomPlayer()], train_x=False)) \
         if is_o \
-        else FlattenObservation(TicTacToeEnv([RandomPlayer(), AIPlayer("o_trainer1")], train_x=True))
+        else FlattenObservation(TicTacToeEnv(
+            [RandomPlayer(), AIPlayer("o_trainer1")],
+            train_x=True
+        ))
 
     # Train the model (3M+ timesteps recommended)
     model = DQN(

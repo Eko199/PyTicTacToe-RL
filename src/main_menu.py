@@ -24,12 +24,15 @@ async def main_menu(args: argparse.Namespace):
             game = ConsoleGame.create_game(test_mode=args.test)
             continue
 
-        print("Welcome to Mega Tic Tac Toe! At any time you wish to quit, just type 'q'. What would you like to do?")
+        print("Welcome to Mega Tic Tac Toe! At any time you wish to quit, just type 'q'. \
+              What would you like to do?")
         print("1. New game")
         print("2. Load game")
         print("3. Train model")
 
-        choice: str = cond_input_or_quit(lambda x: x.isdigit() and 1 <= int(x) <= 3, "", "Invalid input. Please try again (1 - 3): ")
+        choice: str = cond_input_or_quit(lambda x: x.isdigit() and 1 <= int(x) <= 3,
+                                         "",
+                                         "Invalid input. Please try again (1 - 3): ")
 
         match int(choice):
             case 1:
@@ -41,7 +44,7 @@ async def main_menu(args: argparse.Namespace):
             case _:
                 print("An unexpected error occurred. Exiting application.")
                 return
-            
+
         if game is not None:
             await game.play()
 
@@ -57,7 +60,7 @@ async def load_game() -> Game | None:
         return ConsoleGame.load(data) if data is not None else None
     except OSError as e:
         print(e)
-        
+
     return None
 
 def train_menu() -> None:
@@ -65,8 +68,11 @@ def train_menu() -> None:
     Displays the training menu and handles user input for training a model.
     """
     name: str = input("Enter model name: ")
-    steps: int = int(cond_input_or_quit(lambda x: x.isdigit() and int(x) > 0, "Enter training steps (3M+ recommended): "))
-    is_o: bool = cond_input_or_quit(lambda x: x.lower() in { "1", "2", "x", "o" }, "Train as O (1st) or X (2nd)? ") in "1o"
+    steps: int = int(cond_input_or_quit(lambda x: x.isdigit() and int(x) > 0,
+                                        "Enter training steps (3M+ recommended): "))
+
+    is_o: bool = cond_input_or_quit(lambda x: x.lower() in { "1", "2", "x", "o" },
+                                    "Train as O (1st) or X (2nd)? ") in "1o"
 
     train_model(name, steps, is_o)
     print("Training completed!")

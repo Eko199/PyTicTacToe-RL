@@ -23,7 +23,8 @@ def choose_agent(agent_o: bool) -> str:
     Prompts the user to choose a trained agent.
 
     Args:
-        agent_o (bool): Whether the agent is for player O. Then the available agent names begin with "o_".
+        agent_o (bool): Whether the agent is for player O. 
+            Then the available agent names begin with "o_".
 
     Returns:
         str: The name of the chosen agent or an empty string if no agent is chosen.
@@ -40,5 +41,7 @@ def choose_agent(agent_o: bool) -> str:
     for i, name in enumerate(agents):
         print(f"{i+1}. {name[2:]}")
 
-    choice: int = int(cond_input_or_quit(lambda x: x.isdigit() and 0 <= int(x) <= len(agents), "", f"Invalid input! (0 - {len(agents)})"))
+    choice: int = int(cond_input_or_quit(lambda x: x.isdigit() and 0 <= int(x) <= len(agents),
+                                         "",
+                                         f"Invalid input! (0 - {len(agents)})"))
     return agents[choice - 1] if choice != 0 else ""

@@ -1,5 +1,7 @@
 """
-This module defines the TicTacToeEnv class, a custom OpenAI Gym environment for the Mega Tic Tac Toe game, used for training agents.
+This module defines the TicTacToeEnv class, 
+a custom OpenAI Gym environment for the Mega Tic Tac Toe game, 
+used for training agents.
 """
 
 import random
@@ -29,7 +31,7 @@ class TicTacToeEnv(gym.Env):
     """
     Custom OpenAI Gym environment for the Mega Tic Tac Toe game.
     """
-    def __init__(self, opponents: list[BotPlayer] = [RandomPlayer()], train_x: bool = False):
+    def __init__(self, opponents: list[BotPlayer] | None = None, train_x: bool = False):
         """
         Initializes the TicTacToeEnv.
 
@@ -37,8 +39,8 @@ class TicTacToeEnv(gym.Env):
             opponents (list[BotPlayer]): List of opponent bot players to train with.
             train_x (bool): Whether to train as the X player.
         """
-        super(TicTacToeEnv, self).__init__()
-        
+        super().__init__()
+
         self.action_space: gym.Space = spaces.Discrete(81)
 
         self.observation_space: gym.Space = spaces.Dict({
@@ -47,15 +49,16 @@ class TicTacToeEnv(gym.Env):
             "next": spaces.Box(low=-1, high=2, shape=(2,), dtype=np.int8)
         })
 
-        self.opponents: list[BotPlayer] = opponents
+        self.opponents: list[BotPlayer] = opponents if opponents is not None else [RandomPlayer()]
         self.train_x: bool = train_x
-        
+
         self.reset()
 
     def _get_obs(self) -> Observation:
         """
         Gets the current observation of the game. 
-        An observartion is a dictionary pf the current 3x3x3x3 board, the 3x3 big board and the small board coordinates of the next turn.
+        An observartion is a dictionary pf the current 3x3x3x3 board, 
+        the 3x3 big board and the small board coordinates of the next turn.
 
         Returns:
             dict: The current observation.
@@ -66,13 +69,17 @@ class TicTacToeEnv(gym.Env):
             "next": self.game.next
         })
 
-    def reset(self, seed: int | None = None, options: dict | None = None) -> tuple[Observation, dict]:
+    def reset(self,
+              seed: int | None = None,
+              options: dict | None = None) -> tuple[Observation, dict]:
         """
         Resets the environment to the initial state.
 
         Args:
-            seed (int, optional): The seed for random number generation. Comes from the base Env class.
-            options (dict, optional): Additional options for resetting. Comes from the base Env class.
+            seed (int, optional): 
+                The seed for random number generation. Comes from the base Env class.
+            options (dict, optional): 
+                Additional options for resetting. Comes from the base Env class.
 
         Returns:
             tuple: The initial observation and an empty dictionary as info.
@@ -89,7 +96,8 @@ class TicTacToeEnv(gym.Env):
 
     def step(self, action: int) -> tuple[Observation, int, bool, bool, dict]:
         """
-        Takes a step in the environment with the given action and plays the opponent's turn, producing a reward.
+        Takes a step in the environment with the given action and 
+        plays the opponent's turn, producing a reward.
 
         Args:
             action (int): The action to take.
@@ -105,7 +113,7 @@ class TicTacToeEnv(gym.Env):
             self.game.take_turn(big_x, big_y, small_x, small_y)
         except RuntimeError:
             return self._get_obs(), -100, True, False, {}
-        
+
         if self.game.winner is not None:
             return self._get_obs(), self.win_reward, True, False, {}
 
@@ -124,10 +132,10 @@ class TicTacToeEnv(gym.Env):
 
         big_x, big_y, small_x, small_y = self.opponent.get_turn(self.game.next, self.game.board)
         self.game.take_turn(big_x, big_y, small_x, small_y)
-            
+
         if self.game.winner is not None:
             return self._get_obs(), -60, True, False, {}
-        
+
         if self.game.board.is_full():
             return self._get_obs(), 0, True, False, {}
 
