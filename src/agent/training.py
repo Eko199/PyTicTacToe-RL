@@ -5,10 +5,10 @@ This module contains functions for training AI models for Mega Tic Tac Toe.
 import os.path
 from stable_baselines3 import DQN
 from gymnasium.wrappers import FlattenObservation
-from .models_path import MODELS_PATH
-from .tictactoe_env import TicTacToeEnv
-from ..players.random_player import RandomPlayer
-from ..players.ai_player import AIPlayer
+from src.agent.models_path import MODELS_PATH
+from src.agent.tictactoe_env import TicTacToeEnv
+from src.players.random_player import RandomPlayer
+from src.players.ai_player import AIPlayer
 
 def train_model(name: str, steps: int, is_o: bool):
     """

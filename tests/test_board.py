@@ -1,7 +1,7 @@
 import unittest
 import itertools as it
 import numpy.testing as npt
-from src.game.board import Board
+from src.tictactoe.board import Board
 
 class TestBoard(unittest.TestCase):
     def setUp(self):

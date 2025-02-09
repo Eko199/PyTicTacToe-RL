@@ -23,18 +23,18 @@ def get_save_file_name() -> str:
 
     return name
 
-async def serialize_to(file_name: str, object: dict[str, Any]) -> None:
+async def serialize_to(file_name: str, obj: dict[str, Any]) -> None:
     """
     Serializes a dictionary to a JSON file.
 
     Args:
         file_name (str): The name of the save file.
-        object (dict[str, Any]): The dictionary to serialize.
+        obj (dict[str, Any]): The dictionary to serialize.
     """
     if not os.path.exists(SAVES_PATH):
         os.mkdir(SAVES_PATH)
 
-    content: str = json.dumps(object)
+    content: str = json.dumps(obj)
 
     if not file_name.endswith(".json"):
         file_name += ".json"
@@ -66,15 +66,15 @@ async def deserialize_from(file_name: str) -> dict[str, Any] | None:
 
     return json.loads(content)
 
-async def save_json(object: dict[str, Any], file_name: str | None = None) -> None:
+async def save_json(obj: dict[str, Any], file_name: str | None = None) -> None:
     """
     Saves a dictionary to a JSON file.
 
     Args:
-        object (dict[str, Any]): The dictionary to save.
+        obj (dict[str, Any]): The dictionary to save.
         file_name (str | None, optional): The name of the save file. Defaults to None.
     """
-    await serialize_to(get_save_file_name() if file_name is None else file_name, object)
+    await serialize_to(get_save_file_name() if file_name is None else file_name, obj)
 
 async def load_json() -> dict[str, Any] | None:
     """

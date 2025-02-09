@@ -1,20 +1,29 @@
 """
-This module contains the ConsoleGame class, which represents the Mega Tic Tac Toe game played through the console.
+This module contains the ConsoleGame class,
+which represents the Mega Tic Tac Toe game played through the console.
 """
 
-from .game import Game
-from ..players.player import Player
-from ..players.console_player import ConsolePlayer
-from ..players.random_player import RandomPlayer
-from ..players.ai_player import AIPlayer
-from ..agent.choose_agent import choose_agent
-from ..utils import cond_input_or_quit
+import sys
+from src.tictactoe.game import Game
+from src.players.player import Player
+from src.players.console_player import ConsolePlayer
+from src.players.random_player import RandomPlayer
+from src.players.ai_player import AIPlayer
+from src.agent.choose_agent import choose_agent
+from src.utils import cond_input_or_quit
 
 class ConsoleGame(Game):
     """
     Represents the Mega Tic Tac Toe game played through the console.
     """
-    def __init__(self, mode: int, *, test_mode: bool = False, is_o: bool = True, auto_save: bool = True, agent_name: str = ""):
+
+    def __init__(self,
+                 mode: int,
+                 *,
+                 test_mode: bool = False,
+                 is_o: bool = True,
+                 auto_save: bool = True,
+                 agent_name: str = ""):
         """
         Initializes the console game.
 
@@ -32,7 +41,7 @@ class ConsoleGame(Game):
             2: RandomPlayer(),
             3: AIPlayer(agent_name) if agent_name != "" else RandomPlayer()
         }
-        
+
         self.players: dict[int, Player] = {
             self.player1: ConsolePlayer() if is_o else opponents[mode],
             self.player2: opponents[mode] if is_o else ConsolePlayer()
@@ -55,13 +64,13 @@ class ConsoleGame(Game):
         Args:
             file_name (str | None, optional): The name of the save file. Defaults to None.
         """
-        choice = cond_input_or_quit(lambda x: x != "" and x.lower()[0] in "yn", 
-                                    "Would you like to save the game? (y/n) ", 
+        choice = cond_input_or_quit(lambda x: x != "" and x.lower()[0] in "yn",
+                                    "Would you like to save the game? (y/n) ",
                                     "Invalid input!\nWould you like to save the game? (y/n) ")
 
         if choice == "n":
             return
-        
+
         await super().save(file_name)
 
     async def play(self) -> None:
@@ -76,11 +85,13 @@ class ConsoleGame(Game):
             except RuntimeError as e:
                 print(e)
                 await self.save()
-                exit()
+                sys.exit()
 
         self.render(last_turn)
-        print(f"{self.board.player_symbols[self.winner]} wins the game!" if self.winner else "It's a tie!")
-    
+        print(f"{self.board.player_symbols[self.winner]} wins the game!"
+              if self.winner
+              else "It's a tie!")
+
     def invalid_move(self) -> None:
         """
         Prints an error message for an invalid move.
@@ -92,16 +103,17 @@ class ConsoleGame(Game):
         Renders the game board in the console.
 
         Args:
-            last_turn (tuple[int, int, int, int] | None, optional): The last played move, used for coloring. Defaults to None.
+            last_turn (tuple[int, int, int, int] | None, optional): 
+                The last played move, used for coloring. Defaults to None.
         """
-        print(self.board.to_string(last_turn=last_turn, next=self.next))
+        print(self.board.to_string(last_turn=last_turn, next_board=self.next))
 
     def successful_save(self) -> None:
         """
         Prints message for a successful save.
         """
         return print("Game saved successfully!")
-    
+
     @classmethod
     def create_game(cls, *, test_mode: bool = False):
         """
@@ -121,8 +133,13 @@ class ConsoleGame(Game):
             print("2. Play against radomized actions bot")
             print("3. Play against trained AI")
 
-            mode: int = int(cond_input_or_quit(lambda x: x.isdigit() and 1 <= int(x) <= 3, "", "Invalid input. Please try again (1 - 3): "))
-            is_o: bool = cond_input_or_quit(lambda x: x.lower() in { "o", "x", "1", "2" }, "Play as O (1st) or X (2nd)? ", "Invalid input! O or X: ") in "o1"
+            mode: int = int(cond_input_or_quit(lambda x: x.isdigit() and 1 <= int(x) <= 3,
+                                               "",
+                                               "Invalid input. Please try again (1 - 3): "))
+
+            is_o: bool = cond_input_or_quit(lambda x: x.lower() in { "o", "x", "1", "2" },
+                                            "Play as O (1st) or X (2nd)? ",
+                                            "Invalid input! O or X: ") in "o1"
 
             if mode != 3:
                 break

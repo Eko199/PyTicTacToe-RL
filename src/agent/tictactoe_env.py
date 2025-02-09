@@ -7,9 +7,9 @@ from typing import NewType
 import numpy as np
 import gymnasium as gym
 from gymnasium import spaces
-from ..players.bot_player import BotPlayer
-from ..players.random_player import RandomPlayer
-from ..game.game import Game
+from src.players.bot_player import BotPlayer
+from src.players.random_player import RandomPlayer
+from src.tictactoe.game import Game
 
 Observation = NewType("Observation", dict[str, np.ndarray | tuple[int, int]])
 

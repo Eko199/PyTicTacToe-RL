@@ -7,10 +7,10 @@ import random
 import numpy as np
 from numpy.typing import NDArray
 from stable_baselines3 import DQN
-from .bot_player import BotPlayer
-from ..game.board import Board
-from ..agent.models_path import MODELS_PATH
-from ..agent.tictactoe_env import action_coordinates
+from src.players.bot_player import BotPlayer
+from src.tictactoe.board import Board
+from src.agent.models_path import MODELS_PATH
+from src.agent.tictactoe_env import action_coordinates
 
 class AIPlayer(BotPlayer):
     """
@@ -25,12 +25,12 @@ class AIPlayer(BotPlayer):
         """
         self.model: DQN = DQN.load(os.path.join(MODELS_PATH, model_name))
 
-    def get_turn(self, next: tuple[int, int], board: Board) -> tuple[int, int, int, int]:
+    def get_turn(self, next_board: tuple[int, int], board: Board) -> tuple[int, int, int, int]:
         """
         Predicts the next move from the AI model.
 
         Args:
-            next (tuple[int, int]): The coordinates of the big board to play on.
+            next_board (tuple[int, int]): The coordinates of the big board to play on.
             board (Board): The current game board.
 
         Returns:
@@ -39,13 +39,13 @@ class AIPlayer(BotPlayer):
         obs: NDArray[np.int8] = np.concatenate([
             board.board.flatten(),
             board.big_board.flatten(),
-            np.array(next)
+            np.array(next_board)
         ])
 
         action, _ = self.model.predict(obs)
         big_x, big_y, small_x, small_y = action_coordinates(int(action.item()))
 
-        valid_moves: list[tuple[int, int, int, int]] = list(board.valid_moves(next))
+        valid_moves: list[tuple[int, int, int, int]] = list(board.valid_moves(next_board))
         if (big_x, big_y, small_x, small_y) not in valid_moves:
             big_x, big_y, small_x, small_y = random.choice(valid_moves)
 

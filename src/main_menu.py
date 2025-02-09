@@ -4,11 +4,11 @@ This module contains the main menu for the Mega Tic Tac Toe game.
 
 from typing import Any
 import argparse
-from .game.game import Game
-from .game.console_game import ConsoleGame
-from .saving.save_manager import load_json
-from .agent.training import train_model
-from .utils import cond_input_or_quit
+from src.tictactoe.game import Game
+from src.tictactoe.console_game import ConsoleGame
+from src.saving.save_manager import load_json
+from src.agent.training import train_model
+from src.utils import cond_input_or_quit
 
 async def main_menu(args: argparse.Namespace):
     """
