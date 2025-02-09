@@ -24,3 +24,7 @@ class Player(ABC):
             tuple[int, int, int, int] | None: The coordinates of the selected move. 
                                               None if the player quits.
         """
+
+    @abstractmethod
+    def get_type(self) -> str:
+        """Returns the type of the player as a string."""

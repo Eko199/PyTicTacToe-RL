@@ -1,14 +1,10 @@
-"""
-Unit tests for the TicTacToeEnv class.
-"""
+"""This module provides unit tests for the TicTacToeEnv class."""
 
 import unittest
 from src.agent.tictactoe_env import TicTacToeEnv
 
 class TestTicTacToeEnv(unittest.TestCase):
-    """
-    Test cases for the TicTacToeEnv class.
-    """
+    """Test cases for the TicTacToeEnv class"""
 
     def setUp(self):
         """Set up a new TicTacToeEnv instance for each test."""

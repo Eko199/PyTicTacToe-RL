@@ -126,3 +126,7 @@ class ConsolePlayer(HumanPlayer):
             big_x, big_y, small_x, small_y = coordinates
 
         return coordinates
+
+    def get_type(self) -> str:
+        """Returns the type of the player as a string."""
+        return "Console human"

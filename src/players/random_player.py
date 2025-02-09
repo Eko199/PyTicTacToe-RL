@@ -23,3 +23,7 @@ class RandomPlayer(BotPlayer):
             tuple[int, int, int, int]: The coordinates of the selected move.
         """
         return random.choice(list(board.valid_moves(next_board)))
+
+    def get_type(self) -> str:
+        """Returns the type of the player as a string."""
+        return "Random"

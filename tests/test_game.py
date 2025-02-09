@@ -81,11 +81,11 @@ class TestGame(unittest.TestCase):
         self.game.take_turn(0, 0, 0, 0)
         self.game.take_turn(0, 0, 1, 0)
         self.game.take_turn(0, 0, 2, 0)
-        
+
         self.game.take_turn(1, 0, 0, 0)
         self.game.take_turn(1, 0, 1, 0)
         self.game.take_turn(1, 0, 2, 0)
-        
+
         self.game.take_turn(2, 0, 0, 0)
         self.game.take_turn(2, 0, 1, 0)
         self.game.take_turn(2, 0, 2, 0)
@@ -93,6 +93,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(self.game.winner, self.game.player1)
 
     def test_play_turn(self):
+        """Test that play_turn places mark."""
         self.game.players[1] = RandomPlayer()
         asyncio.run(self.game.play_turn())
 

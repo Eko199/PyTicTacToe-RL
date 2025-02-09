@@ -50,3 +50,7 @@ class AIPlayer(BotPlayer):
             big_x, big_y, small_x, small_y = random.choice(valid_moves)
 
         return big_x, big_y, small_x, small_y
+
+    def get_type(self) -> str:
+        """Returns the type of the player as a string."""
+        return "Trained AI"
