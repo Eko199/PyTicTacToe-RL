@@ -77,7 +77,7 @@ class ConsolePlayer(HumanPlayer):
 
             while board.big_board[big_y, big_x] != Board.EMPTY:
                 print(f"Big board ({big_x + 1}, {big_y + 1}) is already taken!")
-                big_coord: tuple[int, int] | None = self.get_coordinates("big")
+                big_coord = self.get_coordinates("big")
 
                 if big_coord is None:
                     return None
@@ -118,8 +118,7 @@ class ConsolePlayer(HumanPlayer):
 
         while board.board[big_y, big_x, small_y, small_x] != Board.EMPTY:
             print("Invalid move!")
-            coordinates: tuple[int, int, int, int] | None = \
-                self.get_all_coordinates(next_board, board)
+            coordinates = self.get_all_coordinates(next_board, board)
 
             if coordinates is None:
                 return None

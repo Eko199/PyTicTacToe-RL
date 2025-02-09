@@ -144,6 +144,6 @@ class ConsoleGame(Game):
             if mode != 3:
                 break
 
-            agent_name: str = choose_agent(not is_o)
+            agent_name = choose_agent(not is_o)
 
         return cls(mode, test_mode=test_mode, is_o=is_o, agent_name=agent_name)
